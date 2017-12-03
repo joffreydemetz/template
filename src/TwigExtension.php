@@ -55,6 +55,10 @@ class TwigExtension extends Twig_Extension
       return is_array($value);
     });
     
+    $functions[] = new Twig_Function('preg_match', function($regex, $value){
+      return preg_match("/$regex/", $value);
+    });
+    
     if ( defined('IAPP') ){
       $functions[] = new Twig_Function('auth', function($action){
         return Callisto()->user->authorise($action);

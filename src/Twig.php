@@ -80,7 +80,7 @@ class Twig
    * Render the view
    * 
    * @param   object   $vData  View data
-   * @return 	void
+   * @return   void
    */
   protected function setBody()
   {
@@ -116,13 +116,13 @@ class Twig
   /**
    * Load the view file
    * 
-   * @param 	string      $viewLayout             The layout template
-   * @param 	string|null $viewLayoutFallback     The layout template fallback
-   * @return 	string      The view filepath
+   * @param   string      $viewLayout             The layout template
+   * @param   string|null $viewLayoutFallback     The layout template fallback
+   * @return   string      The view filepath
    * @throws  TemplateException    If the file was not found
    */
-	protected function getViewFile($viewLayout, $viewLayoutFallback=null)
-	{
+  protected function getViewFile($viewLayout, $viewLayoutFallback=null)
+  {
     if ( null !== $viewLayoutFallback ){
       $filepath = $this->getLayoutFile([ 'views/'.$viewLayout, 'views/'.$viewLayoutFallback ]);
     }
@@ -139,16 +139,16 @@ class Twig
     }
     
     return $filepath;
-	}
+  }
   
-	/**
-	 * Look for a file
+  /**
+   * Look for a file
    * 
-	 * @param 	string|array  $file     The file name(s)
-	 * @return 	string|false  The found file path or false if not found 
-	 */
-	protected function getLayoutFile($file, $extension='tmpl')
-	{
+   * @param   string|array  $file     The file name(s)
+   * @return   string|false  The found file path or false if not found 
+   */
+  protected function getLayoutFile($file, $extension='tmpl')
+  {
     if ( !is_array($file) ){
       $file = [ $file ];
     }
@@ -159,7 +159,7 @@ class Twig
         return $possible.'.'.$extension;
       }
     }
-		
+    
     return false;
   }
 }
