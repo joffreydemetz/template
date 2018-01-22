@@ -41,6 +41,27 @@ abstract class Template implements TemplateInterface
     return $this->data;
   }
   
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function getBodyClass()
+  {
+    $bodyClass = [];
+    
+    if ( !empty($this->data['doc']) && !empty($this->data['doc']['bodyclass']) ){
+      $_bodyClass = is_array($this->data['doc']['bodyclass']) ? $this->data['doc']['bodyclass'] : explode(' ', $this->data['doc']['bodyclass']);
+      $bodyClass  = array_merge($bodyClass, $_bodyClass);
+    }
+    
+    if ( !empty($this->data['bodyclass']) ){
+      $_bodyClass = is_array($this->data['bodyclass']) ? $this->data['bodyclass'] : explode(' ', $this->data['bodyclass']);
+      $bodyClass = array_merge($bodyClass, $_bodyClass);
+    }
+    
+    return $bodyClass;
+  }
+  
   /**
    * Gather infos about modules, etc. for the template display
    * 

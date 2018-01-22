@@ -12,6 +12,6 @@ namespace JDZ\Template;
  * 
  * @author Joffrey Demetz <joffrey.demetz@gmail.com>
  */
-class TempateException extends \RuntimeException
+class TemplateException extends \RuntimeException
 {
 }

@@ -60,7 +60,7 @@ class Twig
       unset($this->viewData->viewLayoutFallback);
     }
     
-    foreach(['layoutPath','viewLayout','viewLayoutFallback','templateClass',''] as $mandatory){
+    foreach(['layoutPath','viewLayout','viewLayoutFallback','templateClass'] as $mandatory){
       if ( !$this->{$key} ){
         throw new TemplateException('Missing '.$key);
       }
