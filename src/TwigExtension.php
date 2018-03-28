@@ -17,30 +17,14 @@ use Twig_Function;
  */
 class TwigExtension extends Twig_Extension
 {
+  /**
+   * Returns a list of functions to add to the existing list
+   *
+   * @return array  An array of functions
+   */
   public function getFunctions()
   {
     $functions = [];
-    
-    if ( function_exists('Str') ){
-      $functions[] = new Twig_Function('str', function(){
-        $args = func_get_args();
-        return call_user_func_array('Str', $args);
-      });
-    }
-    
-    if ( function_exists('Route') ){
-      $functions[] = new Twig_Function('route', function(){
-        $args = func_get_args();
-        return call_user_func_array('Route', $args);
-      });
-    }
-    
-    if ( function_exists('i18n') ){
-      $functions[] = new Twig_Function('i18n', function(){
-        $args = func_get_args();
-        return call_user_func_array('i18n', $args);
-      });
-    }
     
     if ( is_callable(['\\JDZ\\Helpers\\AttributesHelper', 'merge']) ){
       $functions[] = new Twig_Function('mergeHtmlAttributes', function($attrs){
@@ -55,15 +39,12 @@ class TwigExtension extends Twig_Extension
       return is_array($value);
     });
     
-    $functions[] = new Twig_Function('preg_match', function($regex, $value){
-      return preg_match("/$regex/", $value);
+    $functions[] = new Twig_Function('preg_match', function($regex, $value, $flags=''){
+      return preg_match("/$regex/$flags", $value);
     });
-    
-    if ( defined('IAPP') ){
-      $functions[] = new Twig_Function('auth', function($action){
-        return Callisto()->user->authorise($action);
-      });
-    }
+    // $functions[] = new Twig_Function('preg_match', function($regex, $value){
+      // return preg_match("/$regex/", $value);
+    // });
     
     return $functions;
   }

@@ -12,9 +12,9 @@ use JDZ\Filesystem\File;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 use Twig_Extension_Debug;
-use Twig_Extension_Profiler;
-use Twig_Profiler_Profile;
-use Twig_Profiler_Dumper_Text;
+// use Twig_Extension_Profiler;
+// use Twig_Profiler_Profile;
+// use Twig_Profiler_Dumper_Text;
 
 /**
  * Twig renderer
@@ -27,53 +27,129 @@ class Twig
   protected $viewLayout;
   protected $viewLayoutFallback;
   protected $templateClass;
-  protected $templateData;
-  protected $viewData;
   protected $json;
   protected $debug;
   protected $timezone;
-  protected $layout;
-  protected $body;
+  protected $cacheDir;
   
-  public function __construct(array $properties=[])
+  protected $templateData;
+  protected $viewData;
+  protected $layout;
+  protected $twig;
+  
+  public function __construct($layoutPath, $templateClass, $viewLayout, $viewLayoutFallback)
   {
+    $this->setLayoutPath($layoutPath);
+    $this->setTemplateClass($templateClass);
+    $this->setViewLayout($viewLayout);
+    $this->setViewLayoutFallback($viewLayoutFallback);
+    
+    $this->json     = false;
+    $this->debug    = false;
+    $this->cacheDir = false;
+    $this->timezone = date_default_timezone_get();
+    
     $this->templateData = [];
-    $this->json         = false;
-    $this->debug        = false;
-    $this->timezone     = 'UTC';
-    $this->body         = '';
-    
-    foreach($properties as $key => $value){
-      $this->{$key} = $value;
-    }
-    
-    $this->json  = (bool)$this->json;
-    $this->debug = (bool)$this->debug;
-    
-    if ( isset($this->viewData->viewLayout) ){
-      $this->viewLayout = $this->viewData->viewLayout;
-      unset($this->viewData->viewLayout);
-    }
-    
-    if ( isset($this->viewData->viewLayoutFallback) ){
-      $this->viewLayoutFallback = $this->viewData->viewLayoutFallback;
-      unset($this->viewData->viewLayoutFallback);
-    }
-    
-    foreach(['layoutPath','viewLayout','viewLayoutFallback','templateClass'] as $mandatory){
-      if ( !$this->{$key} ){
-        throw new TemplateException('Missing '.$key);
-      }
-    }
-    
-    $this->layout = $this->getViewFile($this->viewLayout, $this->viewLayoutFallback);
-    
-    $this->setBody();
+    $this->viewData     = [];
   }
   
-  public function getBody()
+  public function setLayoutPath($layoutPath)
   {
-    return $this->body;
+    $this->layoutPath = $layoutPath;
+    return $this;
+  }
+  
+  public function setTemplateClass($templateClass)
+  {
+    $this->templateClass = $templateClass;
+    return $this;
+  }
+  
+  public function setViewLayout($viewLayout)
+  {
+    $this->viewLayout = $viewLayout;
+    return $this;
+  }
+  
+  public function setViewLayoutFallback($viewLayoutFallback)
+  {
+    $this->viewLayoutFallback = $viewLayoutFallback;
+    return $this;
+  }
+  
+  public function setJson()
+  {
+    $this->json = true;
+    return $this;
+  }
+  
+  public function setDebug()
+  {
+    $this->debug = true;
+    return $this;
+  }
+  
+  public function setTimezone($timezone)
+  {
+    $this->timezone = $timezone;
+    return $this;
+  }
+  
+  public function setCacheDir($cacheDir)
+  {
+    $this->cacheDir = $cacheDir;
+    return $this;
+  }
+  
+  public function loadTwig(array $extensions=[])
+  {
+    $this->layout = $this->getViewFile($this->viewLayout, $this->viewLayoutFallback);
+    
+    $loader = new Twig_Loader_Filesystem($this->layoutPath);
+    
+    $twigEnv = [
+      'debug' => $this->debug,
+    ];
+    
+    if ( $this->debug ){
+      $twigEnv['debug'] = true;
+    }
+    
+    if ( $this->cacheDir ){
+      $twigEnv['cacheDir'] = $this->cacheDir;
+    }
+    
+    $this->twig = new Twig_Environment($loader, $twigEnv);
+    $core = $this->twig->getExtension('Twig_Extension_Core');
+    $core->setDateFormat('d/m/Y H:i', '%d days');
+    $core->setTimezone($this->timezone);
+    
+    $this->twig->addExtension(new Twig_Extension_Debug());
+    $this->twig->addExtension(new TwigExtension());
+    
+    // $profile = new Twig_Profiler_Profile();
+    // $twig->addExtension(new Twig_Extension_Profiler($profile));
+    
+    if ( $extensions ){
+      foreach($extensions as $extension){
+        $this->addTwigExtension($extension);
+      }
+    }
+  }
+  
+  public function addTwigExtension($className)
+  {
+    $this->twig->addExtension(new $className());
+  }
+  
+  public function setTemplateData(array $templateData)
+  {
+    $this->templateData = $templateData;
+  }
+  
+  public function setViewData(array $viewData)
+  {
+    $this->viewData = $viewData;
   }
   
   /** 
@@ -82,35 +158,20 @@ class Twig
    * @param   object   $vData  View data
    * @return   void
    */
-  protected function setBody()
+  public function render()
   {
-    $loader  = new Twig_Loader_Filesystem($this->layoutPath);
-    // $profile = new Twig_Profiler_Profile();
-    
-    $twig = new Twig_Environment($loader, array(
-      'debug' => true,
-      // Uncomment the line below to cache compiled templates
-      // 'cache' => __DIR__.'/../cache',
-    ));
-    $core = $twig->getExtension('Twig_Extension_Core');
-    $core->setDateFormat('d/m/Y H:i', '%d days');
-    $core->setTimezone($this->timezone);
-    
-    $twig->addExtension(new Twig_Extension_Debug());
-    // $twig->addExtension(new Twig_Extension_Profiler($profile));
-    $twig->addExtension(new TwigExtension());
-    
     $template = new $this->templateClass($this->templateData);
     
     $data = $template->getData();
     $data['json']  = $this->json;
     $data['vData'] = $this->viewData;
-    // debugMe($data)->end();
     
-    $this->body = $twig->render($this->layout, $data);
+    $body = $this->twig->render($this->layout, $data);
     
     // $dumper = new Twig_Profiler_Dumper_Text();
-    // $this->body .= '<pre style="width:90%;margin:0 0 0 10%;">'.$dumper->dump($profile).'</pre>';
+    // $body .= '<pre style="width:90%;margin:0 0 0 10%;">'.$dumper->dump($profile).'</pre>';
+    
+    return $body;
   }
   
   /**
