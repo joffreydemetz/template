@@ -31,7 +31,6 @@ class Twig
   protected $debug;
   protected $timezone;
   protected $cacheDir;
-  
   protected $templateData;
   protected $viewData;
   protected $layout;
@@ -185,10 +184,18 @@ class Twig
   protected function getViewFile($viewLayout, $viewLayoutFallback=null)
   {
     if ( null !== $viewLayoutFallback ){
-      $filepath = $this->getLayoutFile([ 'views/'.$viewLayout, 'views/'.$viewLayoutFallback ]);
+      $filepath = $this->getLayoutFile([ 
+        'views/'.CALLISTO_APP_NAME.'/'.$viewLayout, 
+        'views/'.CALLISTO_APP_NAME.'/'.$viewLayoutFallback,
+        'views/'.IAPP.'/'.$viewLayout, 
+        'views/'.IAPP.'/'.$viewLayoutFallback,
+      ]);
     }
     else {
-      $filepath = $this->getLayoutFile([ 'views/'.$viewLayout ]);
+      $filepath = $this->getLayoutFile([ 
+        'views/'.CALLISTO_APP_NAME.'/'.$viewLayout,
+        'views/'.IAPP.'/'.$viewLayout,
+      ]);
     }
     
     if ( !$filepath ){

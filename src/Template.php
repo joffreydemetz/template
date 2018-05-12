@@ -31,6 +31,7 @@ abstract class Template implements TemplateInterface
     $this->data = $data;
     
     $this->setData();
+    $this->setBodyClass();
   }
   
   /**
@@ -42,23 +43,48 @@ abstract class Template implements TemplateInterface
   }
   
   /**
-   * {@inheritDoc}
+   * Set the body class
+   * 
+   * @return  void
    */
-  public function getBodyClass()
+  protected function setBodyClass()
   {
-    $bodyClass = [];
+    $bodyClass = $this->prepareBodyClass();
+    
+    $bodyClass = array_unique($bodyClass);
+    
+    foreach($bodyClass as $_i => $_class){
+      if ( trim($_class) === '' ){
+        unset($bodyClass[$_i]);
+      }
+    }
+    
+    $this->data['bodyclass'] = implode(' ', $bodyClass);
+  }
+  
+  /**
+   * Prepare the body class
+   * 
+   * @param   array  $classes
+   * @return  array
+   */
+  protected function prepareBodyClass(array $classes=[])
+  {
+    $_classes = [];
     
     if ( !empty($this->data['doc']) && !empty($this->data['doc']['bodyclass']) ){
-      $_bodyClass = is_array($this->data['doc']['bodyclass']) ? $this->data['doc']['bodyclass'] : explode(' ', $this->data['doc']['bodyclass']);
-      $bodyClass  = array_merge($bodyClass, $_bodyClass);
+      $tmp = is_array($this->data['doc']['bodyclass']) ? $this->data['doc']['bodyclass'] : explode(' ', $this->data['doc']['bodyclass']);
+      $_classes = array_merge($_classes, $tmp);
     }
     
     if ( !empty($this->data['bodyclass']) ){
-      $_bodyClass = is_array($this->data['bodyclass']) ? $this->data['bodyclass'] : explode(' ', $this->data['bodyclass']);
-      $bodyClass = array_merge($bodyClass, $_bodyClass);
+      $tmp = is_array($this->data['bodyclass']) ? $this->data['bodyclass'] : explode(' ', $this->data['bodyclass']);
+      $_classes = array_merge($_classes, $tmp);
     }
     
-    return $bodyClass;
+    $classes = array_merge($_classes, $classes);
+    
+    return $classes;
   }
   
   /**

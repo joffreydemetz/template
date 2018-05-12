@@ -20,11 +20,4 @@ interface TemplateInterface
    * @return array 
    */
   public function getData();
-  
-  /**
-   * Get the body classes
-   * 
-   * @return array 
-   */
-  public function getBodyClass();
 }
