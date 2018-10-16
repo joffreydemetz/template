@@ -183,27 +183,29 @@ class Twig
    */
   protected function getViewFile($viewLayout, $viewLayoutFallback=null)
   {
+    $layoutFiles = [];
+    
     if ( null !== $viewLayoutFallback ){
-      $filepath = $this->getLayoutFile([ 
-        'views/'.CALLISTO_APP_NAME.'/'.$viewLayout, 
-        'views/'.CALLISTO_APP_NAME.'/'.$viewLayoutFallback,
+      $layoutFiles = [ 
+        'views/'.IAPP.'/'.$viewLayout.'.'.$viewLayoutFallback, 
         'views/'.IAPP.'/'.$viewLayout, 
         'views/'.IAPP.'/'.$viewLayoutFallback,
-      ]);
+      ];
     }
     else {
-      $filepath = $this->getLayoutFile([ 
-        'views/'.CALLISTO_APP_NAME.'/'.$viewLayout,
+      $layoutFiles = [ 
         'views/'.IAPP.'/'.$viewLayout,
-      ]);
+      ];
     }
+    
+    $filepath = $this->getLayoutFile($layoutFiles);
     
     if ( !$filepath ){
       if ( null !== $viewLayoutFallback ){
-        throw new TemplateException('Error loading layout file for views/'.$viewLayout.' nor views/'.$viewLayoutFallback);
+        throw new TemplateException('Error loading layout nor fallbacks for '.implode(', ', $layoutFiles));
       }
       
-      throw new TemplateException('Error loading layout file for views/'.$viewLayout);
+      throw new TemplateException('Error loading layout file for '.implode(', ', $layoutFiles));
     }
     
     return $filepath;
