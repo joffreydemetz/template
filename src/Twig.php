@@ -134,21 +134,26 @@ class Twig
         $this->addTwigExtension($extension);
       }
     }
+    
+    return $this;
   }
   
   public function addTwigExtension($className)
   {
     $this->twig->addExtension(new $className());
+    return $this;
   }
   
   public function setTemplateData(array $templateData)
   {
     $this->templateData = $templateData;
+    return $this;
   }
   
   public function setViewData(array $viewData)
   {
     $this->viewData = $viewData;
+    return $this;
   }
   
   /** 
