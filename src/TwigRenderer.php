@@ -34,7 +34,7 @@ class TwigRenderer
 
     $this->twig = new \Twig\Environment(new \Twig\Loader\FilesystemLoader($this->layoutPath), [
       'debug' => $this->debug,
-      'cacheDir' => $this->cacheDir,
+      'cache' => $this->cacheDir ?? false,
     ]);
 
     $core = $this->twig->getExtension("\\Twig\\Extension\\CoreExtension");
