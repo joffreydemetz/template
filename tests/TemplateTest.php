@@ -3,6 +3,7 @@
 namespace JDZ\Template\Tests;
 
 use JDZ\Template\Template;
+use JDZ\Template\TemplateData;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -50,12 +51,12 @@ class TemplateTest extends TestCase
         $this->assertSame('custom', $template->getName());
     }
 
-    public function testGetDataReturnsEmptyByDefault(): void
+    public function testGetDataReturnsFreshTemplateDataByDefault(): void
     {
         $template = new ConcreteTemplate();
 
-        $this->assertIsArray($template->getData());
-        $this->assertEmpty($template->getData());
+        $this->assertInstanceOf(TemplateData::class, $template->getData());
+        $this->assertSame(['typeClass' => []], $template->getData()->all());
     }
 
     public function testLoadSetsBodyClass(): void
