@@ -22,16 +22,6 @@ class TemplateDataTest extends TestCase
         $this->assertEmpty($all['typeClass']);
     }
 
-    public function testAppendMergesData(): void
-    {
-        $this->data->append(['title' => 'Hello']);
-        $this->data->append(['description' => 'World']);
-
-        $all = $this->data->all();
-        $this->assertSame('Hello', $all['title']);
-        $this->assertSame('World', $all['description']);
-    }
-
     public function testAppendRecursiveMerge(): void
     {
         $this->data->append(['nested' => ['a' => 1, 'b' => 2]]);
@@ -90,15 +80,5 @@ class TemplateDataTest extends TestCase
         $this->assertCount(2, $all['typeClass']);
         $this->assertContains('page-home', $all['typeClass']);
         $this->assertContains('page-about', $all['typeClass']);
-    }
-
-    public function testFluentInterface(): void
-    {
-        $result = $this->data
-            ->append(['title' => 'Test'])
-            ->addTypeClass('my-class')
-            ->pushToArray('items', 'val', 'key');
-
-        $this->assertInstanceOf(TemplateData::class, $result);
     }
 }

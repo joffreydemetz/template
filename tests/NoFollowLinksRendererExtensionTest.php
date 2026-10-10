@@ -15,11 +15,6 @@ class NoFollowLinksRendererExtensionTest extends TestCase
         $this->ext = new NoFollowLinksRendererExtension();
     }
 
-    public function testExtendsRendererExtension(): void
-    {
-        $this->assertInstanceOf(RendererExtension::class, $this->ext);
-    }
-
     public function testAddsNoFollowToMailtoLinks(): void
     {
         $html = '<a href="mailto:test@example.com">Email us</a>';

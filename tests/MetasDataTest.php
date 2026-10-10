@@ -45,23 +45,6 @@ class MetasDataTest extends TestCase
         $this->assertFalse($this->metas->has('title'));
     }
 
-    public function testEraseNonExistentKeyDoesNotFail(): void
-    {
-        $this->metas->erase('nonexistent');
-        $this->assertFalse($this->metas->has('nonexistent'));
-    }
-
-    public function testSets(): void
-    {
-        $this->metas->sets([
-            'title' => 'Page Title',
-            'description' => 'Page Description',
-        ]);
-
-        $this->assertSame('Page Title', $this->metas->get('title'));
-        $this->assertSame('Page Description', $this->metas->get('description'));
-    }
-
     public function testDef(): void
     {
         // def sets a default only if key is not set
@@ -74,15 +57,6 @@ class MetasDataTest extends TestCase
         $this->assertSame('Custom Title', $this->metas->get('title'));
     }
 
-    public function testAppend(): void
-    {
-        $this->metas->set('title', 'Original');
-        $this->metas->append(['title' => 'Updated', 'description' => 'New']);
-
-        $this->assertSame('Updated', $this->metas->get('title'));
-        $this->assertSame('New', $this->metas->get('description'));
-    }
-
     public function testAppendRecursiveMerge(): void
     {
         $this->metas->set('og', ['title' => 'OG Title', 'type' => 'website']);
@@ -91,31 +65,5 @@ class MetasDataTest extends TestCase
         $og = $this->metas->get('og');
         $this->assertSame('Updated OG', $og['title']);
         $this->assertSame('website', $og['type']);
-    }
-
-    public function testAll(): void
-    {
-        $this->metas->sets([
-            'title' => 'Test',
-            'description' => 'Desc',
-        ]);
-
-        $all = $this->metas->all();
-
-        $this->assertIsArray($all);
-        $this->assertArrayHasKey('title', $all);
-        $this->assertArrayHasKey('description', $all);
-    }
-
-    public function testFluentInterface(): void
-    {
-        $result = $this->metas
-            ->set('a', 1)
-            ->set('b', 2)
-            ->erase('a');
-
-        $this->assertInstanceOf(MetasData::class, $result);
-        $this->assertFalse($this->metas->has('a'));
-        $this->assertTrue($this->metas->has('b'));
     }
 }

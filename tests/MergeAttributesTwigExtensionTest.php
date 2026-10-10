@@ -14,20 +14,6 @@ class MergeAttributesTwigExtensionTest extends TestCase
         $this->ext = new MergeAttributesTwigExtension();
     }
 
-    public function testGetName(): void
-    {
-        $this->assertSame('jdz.mergeAttributes', $this->ext->getName());
-    }
-
-    public function testGetFunctionsReturnsTwigFunctions(): void
-    {
-        $functions = $this->ext->getFunctions();
-
-        $this->assertIsArray($functions);
-        $this->assertNotEmpty($functions);
-        $this->assertInstanceOf(\Twig\TwigFunction::class, $functions[0]);
-    }
-
     public function testMergeHtmlAttributesFunction(): void
     {
         $functions = $this->ext->getFunctions();

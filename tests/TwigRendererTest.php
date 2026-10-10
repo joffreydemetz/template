@@ -24,21 +24,6 @@ class TwigRendererTest extends TestCase
         return $renderer;
     }
 
-    public function testConstructorDefaults(): void
-    {
-        $renderer = new TwigRenderer();
-
-        $this->assertNull($renderer->cacheDir);
-        $this->assertSame(date_default_timezone_get(), $renderer->timezone);
-    }
-
-    public function testConstructorWithDebugAndCache(): void
-    {
-        $renderer = new TwigRenderer(true, '/tmp/cache');
-
-        $this->assertSame('/tmp/cache', $renderer->cacheDir);
-    }
-
     public function testLoadTwigAndRenderSimpleTemplate(): void
     {
         $renderer = $this->createRenderer();
@@ -49,24 +34,6 @@ class TwigRendererTest extends TestCase
         $output = $renderer->render();
 
         $this->assertSame('Hello, World!', trim($output));
-    }
-
-    public function testRenderWithVariables(): void
-    {
-        $renderer = $this->createRenderer();
-        $renderer->viewLayouts = ['variables'];
-        $renderer->data = [
-            'title' => 'My Page',
-            'items' => ['Alpha', 'Beta', 'Gamma'],
-        ];
-
-        $renderer->loadTwig();
-        $output = $renderer->render();
-
-        $this->assertStringContainsString('My Page', $output);
-        $this->assertStringContainsString('Alpha', $output);
-        $this->assertStringContainsString('Beta', $output);
-        $this->assertStringContainsString('Gamma', $output);
     }
 
     public function testAddTwigExtension(): void

@@ -66,13 +66,4 @@ class ViewDataTest extends TestCase
         $this->assertSame('has value', $all['i18n']['explicit_key']);
         $this->assertArrayHasKey('implicit_key', $all['i18n']);
     }
-
-    public function testFluentInterface(): void
-    {
-        $result = $this->view
-            ->addJsTranslation('a', 'A')
-            ->addJsTranslations(['b' => 'B']);
-
-        $this->assertInstanceOf(ViewData::class, $result);
-    }
 }

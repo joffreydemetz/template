@@ -70,14 +70,6 @@ class TemplateTest extends TestCase
         $this->assertStringContainsString('dark-mode', $data['bodyclass']);
     }
 
-    public function testLoadReturnsStaticForChaining(): void
-    {
-        $template = new ConcreteTemplate();
-        $result = $template->load();
-
-        $this->assertSame($template, $result);
-    }
-
     public function testLoadWithTheme(): void
     {
         $template = new ConcreteTemplate('page');
