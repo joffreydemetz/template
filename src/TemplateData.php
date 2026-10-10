@@ -51,7 +51,10 @@ class TemplateData extends jData implements \ArrayAccess
       throw new \RuntimeException('TemplateData::pushToArray needs data[var] to be an array');
     }
 
-    if (null !== $key) {
+    // without a key the value is appended (it used to be dropped)
+    if (null === $key) {
+      $this->data[$var][] = $value;
+    } else {
       $this->data[$var][$key] = $value;
     }
 

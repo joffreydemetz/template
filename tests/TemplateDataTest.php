@@ -81,4 +81,14 @@ class TemplateDataTest extends TestCase
         $this->assertContains('page-home', $all['typeClass']);
         $this->assertContains('page-about', $all['typeClass']);
     }
+
+    public function testPushToArrayWithoutAKeyAppends(): void
+    {
+        $data = new TemplateData();
+
+        $data->pushToArray('scripts', 'a.js');
+        $data->pushToArray('scripts', 'b.js');
+
+        $this->assertSame(['a.js', 'b.js'], $data['scripts']);
+    }
 }
