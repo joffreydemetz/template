@@ -146,4 +146,19 @@ class TemplateTest extends TestCase
         $this->assertStringContainsString('type-post', $data['bodyclass']);
         $this->assertStringContainsString('page-blog', $data['bodyclass']);
     }
+
+    public function testTheBodyClassIsAssembledIntoTheGivenData(): void
+    {
+        $data = new TemplateData();
+        $data->set('typeClass', ['t1', 't2', 't1']);
+
+        $template = new ConcreteTemplate('page');
+        $template->setData($data)->setBodyClasses(['one', ' ', 'one', 'two']);
+        $template->load();
+
+        // theme first, type classes, then the body classes; a duplicate keeps its last place, blanks go
+        $this->assertSame('theme-page t2 t1 one two', $data->get('bodyclass'));
+        $this->assertFalse($data->has('typeClass'), 'typeClass is consumed');
+        $this->assertSame('page', $template->getTheme(), 'a template other than main is its own theme');
+    }
 }

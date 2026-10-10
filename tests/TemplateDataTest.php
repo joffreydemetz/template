@@ -91,4 +91,17 @@ class TemplateDataTest extends TestCase
 
         $this->assertSame(['a.js', 'b.js'], $data['scripts']);
     }
+
+    public function testArrayAccess(): void
+    {
+        $data = new TemplateData();
+
+        $data['title'] = 'Home';
+        $this->assertTrue(isset($data['title']));
+        $this->assertSame('Home', $data['title']);
+
+        unset($data['title']);
+        $this->assertFalse(isset($data['title']));
+        $this->assertNull($data['title']);
+    }
 }
