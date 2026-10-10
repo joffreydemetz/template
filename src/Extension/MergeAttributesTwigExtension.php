@@ -57,7 +57,7 @@ class MergeAttributesTwigExtension extends TwigAbstractExtension
         }
 
         return '';
-      }),
+      }, ['is_safe' => ['html']]),
     ];
   }
 }
