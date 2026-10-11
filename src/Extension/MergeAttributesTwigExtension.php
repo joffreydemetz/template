@@ -41,11 +41,15 @@ class MergeAttributesTwigExtension extends TwigAbstractExtension
             }
             elseif ( $value ){
               $value = trim($value);
-              $value = str_replace('"', '\"', $value);
             }
             else {
               $value = '';
             }
+
+            // HTML-escaped (D15: a quote used to become \", which is no escape in
+            // HTML); entities already in the value are kept, the stored values
+            // carry &amp; and the like and must not turn into a visible "&amp;"
+            $value = \htmlspecialchars((string)$value, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8', false);
 
             $attributes[] = $key.'="'.$value.'"';
           }

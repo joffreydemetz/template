@@ -61,14 +61,39 @@ class MergeAttributesTwigExtensionTest extends TestCase
         $this->assertSame('', $result);
     }
 
-    public function testMergeHtmlAttributesEscapesQuotes(): void
+    /**
+     * D15 (2026-10-10): a double quote was escaped as \" — not HTML: the
+     * attribute ended at the quote and the browser showed a backslash. Every
+     * value is HTML-escaped now; entities already in the value are kept (the
+     * stored values carry &amp; and the like, and render right today).
+     */
+    public static function escapedValues(): array
     {
-        $functions = $this->ext->getFunctions();
-        $callable = $functions[0]->getCallable();
+        return [
+            'double quotes' => ['He said "hello"', 'He said &quot;hello&quot;'],
+            'single quotes' => ["l'été", 'l&#039;été'],
+            'an ampersand' => ['Tom & Jerry', 'Tom &amp; Jerry'],
+            'angle brackets' => ['a <b> c', 'a &lt;b&gt; c'],
+            'an attribute break-out' => ['x" onmouseover="alert(1)', 'x&quot; onmouseover=&quot;alert(1)'],
+            'an entity already there' => ['Tom &amp; Jerry', 'Tom &amp; Jerry'],
+            'a numeric entity already there' => ['caf&#233;', 'caf&#233;'],
+            'invalid utf-8' => ["caf\xE9", "caf\u{FFFD}"],
+        ];
+    }
 
-        $result = $callable(['title' => 'He said "hello"']);
+    #[\PHPUnit\Framework\Attributes\DataProvider('escapedValues')]
+    public function testMergeHtmlAttributesEscapesEveryValueAsHtml(string $value, string $escaped): void
+    {
+        $callable = $this->ext->getFunctions()[0]->getCallable();
 
-        $this->assertStringContainsString('title="He said \"hello\""', $result);
+        $this->assertSame(' title="' . $escaped . '"', $callable(['title' => $value]));
+    }
+
+    public function testAClassListIsEscapedToo(): void
+    {
+        $callable = $this->ext->getFunctions()[0]->getCallable();
+
+        $this->assertSame(' class="a&quot;b c"', $callable(['class' => ['a"b', 'c']]));
     }
 
     public function testIntegrationWithTwig(): void
