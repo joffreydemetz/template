@@ -59,7 +59,7 @@ Namespace `JDZ\Template\`.
 | `ViewData` | `JDZ\Utils\Data` for a view, with `addJsTranslation()` / `addJsTranslations()` (stored under `i18n`). |
 | `MetasData` | Page metadata bag (title, description, Open Graph…): `set()`, `sets()`, `append()`, `get()`, `def()`, `has()`, `erase()`, `all()`. |
 | `TwigRenderer` | `new TwigRenderer(bool $debug = false, ?string $cacheDir = null)`; set `layoutPath`, `viewLayouts`, `data` (and optionally `timezone`), then `loadTwig()`, `addTwigExtension()`, `render()`. Views are resolved as `<layoutPath>/views/<layout>.tmpl`, first match wins. |
-| `Extension\MergeAttributesTwigExtension` | Twig function `mergeHtmlAttributes(attrs)` — renders an attribute map as ` key="value"` pairs (array `class` values are joined). |
+| `Extension\MergeAttributesTwigExtension` | Twig function `mergeHtmlAttributes(attrs)` — renders an attribute map as ` key="value"` pairs (array `class` values are joined); every value is HTML-escaped (`ENT_QUOTES`, without re-encoding entities already in it). |
 | `Extension\RendererExtension` | Post-render hook (`Contract\RendererExtensionInterface::render(string $body): string`); the base class returns the body unchanged. |
 | `Extension\NoFollowLinksRendererExtension` | Post-render pass that adds `target="_blank"` and `rel="nofollow"` to `mailto:` and `tel:` links. |
 
@@ -78,6 +78,11 @@ Runnable samples in `examples/`:
 ```bash
 composer test
 ```
+
+## Changelog
+
+- **1.0.3** — `mergeHtmlAttributes()` HTML-escapes every attribute value (a `"` used to become `\"`, which HTML does not read: the attribute ended there); entities already in a value are kept.
+- **1.0.2** — `TemplateData::pushToArray()` without a key appends the value (it was dropped).
 
 ## License
 
